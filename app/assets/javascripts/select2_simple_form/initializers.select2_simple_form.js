@@ -24,9 +24,11 @@ var Select2SimpleForm = (function($) {
         if (!$input.val().match(/^\s*$/)) {
           var ids = $input.val().split(',');
           for (var i in ids)
-            $form.append('<input type="hidden" name="' + $input.attr('name') + '[]" value="' + ids[i] + '">');
+            $form.append('<input type="hidden" name="' + $input.attr(
+              'name') + '[]" value="' + ids[i] + '">');
         } else {
-          $form.append('<input type="hidden" name="' + $input.attr('name') + '[]" value="">');
+          $form.append('<input type="hidden" name="' + $input.attr(
+            'name') + '[]" value="">');
         }
         $input.prop('disabled', true);
       });
@@ -35,7 +37,10 @@ var Select2SimpleForm = (function($) {
     // Check for creation box when there were no results
     if (options.can_create_on_empty_result) {
       select2Options.formatNoMatches = function(term) {
-        return '<span style="cursor: pointer;" onclick="openTab(\'' + options.can_create_on_empty_result.url + '\')"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> ' + options.can_create_on_empty_result.label + '</span>';
+        return '<span style="cursor: pointer;" onclick="openTab(\'' +
+          options.can_create_on_empty_result.url +
+          '\')"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> ' +
+          options.can_create_on_empty_result.label + '</span>';
       }
     }
 
@@ -45,16 +50,18 @@ var Select2SimpleForm = (function($) {
 
       // We're going to use a slight variation of Select2 markMatch function
       // to avoid matches inside html tags:
-      var markMatch = function (text, term, markup, escapeMarkup) {
-        var searchRegex = stripDiacritics(term.toUpperCase()) + "(?![^<]*>)";
-        var match = stripDiacritics(text.toUpperCase()).match(searchRegex),
-            tl    = term.length;
+      var markMatch = function(text, term, markup, escapeMarkup) {
+        var searchRegex = stripDiacritics(term.toUpperCase()) +
+          "(?![^<]*>)";
+        var match = stripDiacritics(text.toUpperCase()).match(
+            searchRegex),
+          tl = term.length;
 
         match = match ? match.index : -1;
 
         if (match < 0) {
-            markup.push(escapeMarkup(text));
-            return;
+          markup.push(escapeMarkup(text));
+          return;
         }
 
         markup.push(escapeMarkup(text.substring(0, match)));
@@ -64,13 +71,15 @@ var Select2SimpleForm = (function($) {
         markup.push(escapeMarkup(text.substring(match + tl, text.length)));
       }
 
-      var formatResult = function (result, container, query, escapeMarkup){
-        var markup=[];
+      var formatResult = function(result, container, query, escapeMarkup) {
+        var markup = [];
         markMatch(this.text(result), query.term, markup, escapeMarkup);
         return markup.join("");
       }
 
-      select2Options.escapeMarkup = function(m) { return m; };
+      select2Options.escapeMarkup = function(m) {
+        return m;
+      };
       select2Options.formatResult = formatResult;
     }
 
@@ -80,18 +89,22 @@ var Select2SimpleForm = (function($) {
         url: options.ajax,
         dataType: 'json',
         quietMillis: 250,
-        data: function (term, page) {
+        data: function(term, page) {
           return {
-            q: term, page: page
+            q: term,
+            page: page
           };
         },
-        results: function (data, page) {
-          return { results: data };
+        results: function(data, page) {
+          return {
+            results: data
+          };
         }
       };
 
       // By default, minimum input length will be 1
-      select2Options.minimumInputLength = (options.minimum_input_lenght == null ) ? 1 : options.minimum_input_lenght;
+      select2Options.minimumInputLength = (options.minimum_input_lenght ==
+        null) ? 1 : options.minimum_input_lenght;
 
       // When initialize the Select2 element, checks if it's multiple or not.
       // In the first case, it will use all the data retrieved. Otherwise,
@@ -99,31 +112,50 @@ var Select2SimpleForm = (function($) {
       select2Options.initSelection = function(element, callback) {
         var ids = sanitizeInputValues(element);
         if (ids.length > 0) {
-          $.get(options.ajax, { id: ids })
-          .done(function(data) {
-            if ( options.multiple ) {
-              element.val('');
-              callback(data);
-            } else {
-              callback(data[0]);
-            }
-          });
+          $.get(options.ajax, {
+              id: ids
+            })
+            .done(function(data) {
+              if (options.multiple) {
+                element.val('');
+                callback(data);
+              } else {
+                callback(data[0]);
+              }
+            });
         }
       }
     }
 
     if (options.void_option) {
-      $input.append($('<option value="">' + options.void_option + '</option>'));
+      $input.append($('<option value="">' + options.void_option +
+        '</option>'));
     }
 
     if (options.i18n) {
       $.extend($.fn.select2.defaults, {
-        formatNoMatches:       function () { return options.i18n.formatNoMatches },
-        formatInputTooShort:   function (input, min) { var n = min - input.length; return options.i18n.formatInputTooShort.replace(':n:', n) },
-        formatInputTooLong:    function (input, max) { var n = input.length - max; return options.i18n.formatInputTooLong.replace(':n:', n) },
-        formatSelectionTooBig: function (limit) { return options.i18n.formatSelectionTooBig.replace(':limit:', limit) },
-        formatLoadMore:        function (pageNumber) { return options.i18n.formatLoadMore.replace(':pageNumber:', pageNumber) },
-        formatSearching:       function () { return options.i18n.formatSearching; },
+        formatNoMatches: function() {
+          return options.i18n.formatNoMatches
+        },
+        formatInputTooShort: function(input, min) {
+          var n = min - input.length;
+          return options.i18n.formatInputTooShort.replace(':n:', n)
+        },
+        formatInputTooLong: function(input, max) {
+          var n = input.length - max;
+          return options.i18n.formatInputTooLong.replace(':n:', n)
+        },
+        formatSelectionTooBig: function(limit) {
+          return options.i18n.formatSelectionTooBig.replace(
+            ':limit:', limit)
+        },
+        formatLoadMore: function(pageNumber) {
+          return options.i18n.formatLoadMore.replace(':pageNumber:',
+            pageNumber)
+        },
+        formatSearching: function() {
+          return options.i18n.formatSearching;
+        },
       });
     }
 
@@ -136,22 +168,29 @@ var Select2SimpleForm = (function($) {
     $(this).find('[data-ui="select2-simpleform"]').each(function() {
       var $this = $(this);
       var dataOptions = $this.data('options');
-      var initializerOptions = prepareSelect2Options(dataOptions || options || {}, $this);
+      var initializerOptions = prepareSelect2Options(dataOptions ||
+        options || {}, $this);
       $this.select2(initializerOptions);
 
       // Post plugins for Select2
       if (dataOptions.sortable) {
         $this.select2('container').find('ul.select2-choices').sortable({
           containment: 'parent',
-          start: function() { $this.select2('onSortStart'); },
-          update: function() { $this.select2('onSortEnd'); }
+          start: function() {
+            $this.select2('onSortStart');
+          },
+          update: function() {
+            $this.select2('onSortEnd');
+          }
         });
       }
     });
   }
 
   // Load the plugin
-  var eventToListen = (window.Turbolinks === undefined) ? 'ready' : 'page:change';
+  var eventToListen = (window.Turbolinks === undefined) ? 'ready' : (window
+    .Turbolinks.EVENST === undefined ? 'turbolinks:visit' : 'page:change'
+  );
   $(document).on(eventToListen, initializeSelect2SimpleForm);
 
   return {
